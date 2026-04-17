@@ -16,3 +16,20 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+  frontend:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./services/frontend:/app
+      # This prevents the local node_modules from overwriting the container's
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      backend:
+        condition: service_healthy
