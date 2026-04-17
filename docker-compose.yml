@@ -1,0 +1,18 @@
+services:
+  backend:
+    build:
+      context: ./services/backend
+      target: dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./services/backend:/app
+      - /app/.venv             # keep the container's venv, don't overwrite it
+    environment:
+      - APP_ENV=development
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
