@@ -1,4 +1,20 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: insight
+      POSTGRES_PASSWORD: insight
+      POSTGRES_DB: insight
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U insight"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./services/backend
@@ -9,7 +25,11 @@ services:
       - ./services/backend:/app
       - /app/.venv             # keep the container's venv, don't overwrite it
     environment:
-      - APP_ENV=development
+      APP_ENV: development
+      DATABASE_URL: postgresql://insight:insight@postgres:5432/insight
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()"]
       interval: 10s
@@ -29,7 +49,10 @@ services:
       # This prevents the local node_modules from overwriting the container's
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:8000
+      VITE_API_URL: http://localhost:8000
     depends_on:
       backend:
         condition: service_healthy
+
+volumes:
+  postgres_data:
