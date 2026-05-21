@@ -1,0 +1,28 @@
+{
+  "name": "LiveModel Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    "ghcr.io/devcontainers/features/node:2.0.0": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers-extra/features/uv:1.0.2": {}
+  },
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "esbenp.prettier-vscode",
+        "Vue.volar"
+      ]
+    }
+  },
+  "postCreateCommand": "cd services/backend && uv sync && cd ../frontend && npm install",
+  "postStartCommand": "echo 'Dev container ready. Run make help for available commands.'",
+  "remoteUser": "vscode"
+}
