@@ -18,7 +18,7 @@ export const useHealthStore = defineStore('health', () => {
     error.value = null
 
     try {
-      const data = await api.get<HealthResponse>('/health')
+      const data = await api.get<HealthResponse>('/api/health')
       status.value = data.status === 'ok' ? 'ok' : 'error'
     } catch (e) {
       status.value = 'error'
